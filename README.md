@@ -53,6 +53,7 @@
 
 
 ## Güncel Dosya Yapısı
+```plaintext
 src/
 ├── __init__.py
 ├── main.py
@@ -67,9 +68,10 @@ src/
 │   ├── chain.py
 │   └── config.py
 ├── gui/               # (ileride)
-└── analytics/         # (ileride)
-
+└── analytics/         # (ileride) 
+```
 ## 🔧 Dosya mimarisi
+```
 post_quantum_blockchain/
 │
 ├── README.md
@@ -123,7 +125,7 @@ post_quantum_blockchain/
 └── docs/
     ├── project_report.tex (or .md)
     └── presentation.pptx
-    
+```
     
 ## 🔧 Kritik Kod Parçacıkları (Özet)
 
