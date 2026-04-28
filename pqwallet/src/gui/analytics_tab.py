@@ -1,14 +1,18 @@
 # src/gui/analytics_tab.py
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QProgressBar, QMessageBox
-from PyQt5.QtCore import QThread, pyqtSignal
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QPushButton, QLabel, QProgressBar, QMessageBox, QTabWidget
+from PyQt5.QtCore import QThread, pyqtSignal, Qt
 from src.analytics.benchmarks import measure_wallet_ops
-from src.analytics.plots import create_comparison_bar_chart, create_signature_size_comparison
+from src.analytics.plots import (
+    create_time_comparison_chart,
+    create_size_comparison_chart,
+    create_signature_size_boxplot,
+    create_quantum_resilience_chart
+)
 from src.wallet.pq_wallet import PQWallet
 from src.wallet.ecdsa_wallet import ECDSAWallet
-from PyQt5.QtCore import Qt 
 
 class BenchmarkThread(QThread):
-    finished = pyqtSignal(dict, dict, list, list)  # pq_metrics, ecdsa_metrics, pq_sizes, ecdsa_sizes
+    finished = pyqtSignal(dict, dict, list, list)
     error = pyqtSignal(str)
     
     def __init__(self, num_iterations=10):
@@ -17,14 +21,10 @@ class BenchmarkThread(QThread):
         
     def run(self):
         try:
-            # PQ ölçümü
             pq_metrics = measure_wallet_ops(PQWallet, self.num_iterations)
-            # ECDSA ölçümü
             ecdsa_metrics = measure_wallet_ops(ECDSAWallet, self.num_iterations)
             
-            # Ayrıca imza boyutu listelerini toplamak için yeniden ölçüm yapabiliriz (daha temiz bir yöntem)
-            # Ama measure_wallet_ops sadece ortalama döndürüyor. İstersek orada tüm boyutları da döndürelim.
-            # Şimdilik basitçe yeniden topluyoruz (performans için ideal değil ama demo için yeterli)
+            # İmza boyutu listelerini topla
             pq_sizes = []
             ecdsa_sizes = []
             pq_w = PQWallet()
@@ -62,7 +62,7 @@ class AnalyticsTab(QWidget):
     def run_benchmark(self):
         self.btn_run.setEnabled(False)
         self.progress.setVisible(True)
-        self.progress.setRange(0, 0)  # belirsiz ilerleme
+        self.progress.setRange(0, 0)
         self.thread = BenchmarkThread(num_iterations=10)
         self.thread.finished.connect(self.on_benchmark_finished)
         self.thread.error.connect(self.on_benchmark_error)
@@ -72,34 +72,38 @@ class AnalyticsTab(QWidget):
         self.progress.setVisible(False)
         self.btn_run.setEnabled(True)
         
-        # Karşılaştırmalı bar grafiği
-        bar_canvas = create_comparison_bar_chart(pq_metrics, ecdsa_metrics)
-        # İmza boyutları boxplot
-        box_canvas = create_signature_size_comparison(pq_sizes, ecdsa_sizes)
+        # Grafikleri oluştur
+        time_canvas = create_time_comparison_chart(pq_metrics, ecdsa_metrics)
+        size_canvas = create_size_comparison_chart(pq_metrics, ecdsa_metrics)
+        box_canvas = create_signature_size_boxplot(pq_sizes, ecdsa_sizes)
+        resilience_canvas = create_quantum_resilience_chart()
         
-        # İkisini bir QTabWidget içinde gösterebiliriz
-        from PyQt5.QtWidgets import QTabWidget
+        # Sekmeli görünüm
         tabs = QTabWidget()
-        tabs.addTab(bar_canvas, "Karşılaştırma Grafiği")
+        tabs.addTab(time_canvas, "Zaman Karşılaştırması")
+        tabs.addTab(size_canvas, "Boyut Karşılaştırması")
         tabs.addTab(box_canvas, "İmza Boyutu Dağılımı")
+        tabs.addTab(resilience_canvas, "⚛️ Kuantum Direnci")
         
-        # Eski placeholder'ı kaldır, yenisini ekle
+        # Eski placeholder'ı değiştir
         layout = self.layout()
         layout.replaceWidget(self.canvas_placeholder, tabs)
         self.canvas_placeholder.deleteLater()
         self.canvas_placeholder = tabs
         
-        # Detaylı metrikleri de gösteren bir mesaj kutusu eklenebilir
+        # Detaylı metrik mesajı
         msg = (f"ML-DSA-44:\n"
                f"  Keygen: {pq_metrics['keygen_time']:.6f} s\n"
                f"  Sign: {pq_metrics['avg_sign_time']:.6f} s\n"
                f"  Verify: {pq_metrics['avg_verify_time']:.6f} s\n"
                f"  Sig size: {pq_metrics['avg_sig_size']:.1f} bytes\n"
+               f"  Pubkey size: {pq_metrics['pubkey_size']} bytes\n\n"
                f"ECDSA:\n"
                f"  Keygen: {ecdsa_metrics['keygen_time']:.6f} s\n"
                f"  Sign: {ecdsa_metrics['avg_sign_time']:.6f} s\n"
                f"  Verify: {ecdsa_metrics['avg_verify_time']:.6f} s\n"
-               f"  Sig size: {ecdsa_metrics['avg_sig_size']:.1f} bytes")
+               f"  Sig size: {ecdsa_metrics['avg_sig_size']:.1f} bytes\n"
+               f"  Pubkey size: {ecdsa_metrics['pubkey_size']} bytes")
         QMessageBox.information(self, "Ölçüm Sonuçları", msg)
         
     def on_benchmark_error(self, err_msg):
