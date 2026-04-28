@@ -35,62 +35,38 @@ pqwallet/
 ├── requirements.txt
 ├── seedgenerator.py
 ├── src
-│   ├── analytics
+│   ├── analytics/
 │   │   ├── benchmarks.py
 │   │   ├── __init__.py
 │   │   ├── plots.py
-│   │   ├── __pycache__
-│   │   │   ├── benchmarks.cpython-311.pyc
-│   │   │   ├── __init__.cpython-311.pyc
-│   │   │   └── plots.cpython-311.pyc
 │   │   └── stats.py
-│   ├── blockchain
+│   ├── blockchain/
 │   │   ├── chain.py
 │   │   ├── config.py
 │   │   ├── __init__.py
 │   │   ├── models.py
-│   │   └── __pycache__
-│   │       ├── chain.cpython-311.pyc
-│   │       ├── __init__.cpython-311.pyc
-│   │       └── models.cpython-311.pyc
 │   ├── comparison.py
-│   ├── gui
+│   ├── gui/
 │   │   ├── analytics_tab.py
 │   │   ├── blockchain_tab.py
 │   │   ├── comparison_tab.py
 │   │   ├── __init__.py
 │   │   ├── main_window.py
-│   │   ├── __pycache__
-│   │   │   ├── analytics_tab.cpython-311.pyc
-│   │   │   ├── blockchain_tab.cpython-311.pyc
-│   │   │   ├── comparison_tab.cpython-311.pyc
-│   │   │   ├── __init__.cpython-311.pyc
-│   │   │   ├── main_window.cpython-311.pyc
-│   │   │   ├── shor_video_tab.cpython-311.pyc
-│   │   │   └── wallet_tab.cpython-311.pyc
 │   │   ├── shor_video_tab.py
 │   │   ├── styles.py
 │   │   └── wallet_tab.py
 │   ├── __init__.py
 │   ├── main.py
-│   ├── __pycache__
-│   │   ├── comparison.cpython-311.pyc
-│   │   ├── __init__.cpython-311.pyc
-│   │   └── main.cpython-311.pyc
-│   ├── simulation
+│   ├── simulation/
 │   │   ├── __init__.py
 │   │   ├── miner.py
 │   │   ├── runner.py
 │   │   └── tx_generator.py
-│   └── wallet
+│   └── wallet/
 │       ├── ecdsa_wallet.py
 │       ├── __init__.py
 │       ├── mnemonic_utils.py
-│       ├── pq_wallet.py
-│       └── __pycache__
-│           ├── ecdsa_wallet.cpython-311.pyc
-│           ├── __init__.cpython-311.pyc
-│           └── pq_wallet.cpython-311.pyc
+│       └──  pq_wallet.py
 ├── data
 │   └── logs
 ├── docs
