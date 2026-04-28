@@ -1,137 +1,143 @@
-# Post-Quantum Blockchain Simülatörü – Proje Özeti
+# Post-Quantum Wallet / Blockchain Simulator
 
-## ✅ Tamamlanan Aşamalar
+Post-Quantum Wallet, ML-DSA-44 (Dilithium) tabanlı kuantum-güvenli cüzdan ile klasik ECDSA cüzdanı karşılaştıran, PyQt5 arayüzlü bir blockchain simülatörüdür. Proje; anahtar üretimi, imzalama, doğrulama, blok üretimi ve performans ölçümlerini aynı uygulama içinde sunar.
 
-### Aşama 1 – Core Wallet Modülü
+## Özellikler
 
-- Post‑quantum cüzdan (`src/wallet/pq_wallet.py`): ML-DSA-44 (Dilithium) kullanır.
-  - `generate_keypair`, `sign`, `verify`, `get_address` metodları.
-  - Anahtar üretimi, imzalama ve doğrulama süreleri ölçülür.
-  - Adres: SHA256 + RIPEMD‑160 (hex).
-- Klasik ECDSA cüzdan (`src/wallet/ecdsa_wallet.py`): secp256k1 eğrisi.
-  - Aynı arayüz, public key bytes olarak saklanır.
-  - `VerifyingKey.from_string` ile doğrulama.
+- **Post-quantum imza desteği**: `pqcrypto.sign.ml_dsa_44` ile ML-DSA-44 kullanır.
+- **Klasik ECDSA karşılaştırması**: `secp256k1` üzerinde çalışan ECDSA cüzdanı ile yan yana kıyaslama yapar.
+- **Blockchain simülasyonu**: İşlem havuzu, genesis blok, proof-of-work ve zincir doğrulama içerir.
+- **PyQt5 masaüstü arayüzü**: Cüzdan, Blockchain, Analiz ve Karşılaştırma sekmeleri.
+- **Performans ölçümü**: Anahtar üretim süresi, imza boyutu, imzalama ve doğrulama sürelerini ölçer.
+- **Grafik ve analiz**: Matplotlib / seaborn / pandas ile görselleştirme desteği.
+- **Seed üretimi**: `seedgenerator.py` ile 12 kelimelik mnemonic seed oluşturma örneği.
 
-### Aşama 2 – Blockchain Engine
+## Teknoloji Yığını
 
-- `src/blockchain/models.py`: `Transaction`, `Block` sınıfları.
-  - `Transaction` içinde `wallet_type` alanı (`"pq"` veya `"ecdsa"`) ile hangi wallet tipinin kullanıldığı belirtilir.
-  - `is_valid()` metodu, `wallet_type`'a göre doğru wallet sınıfını dinamik olarak import eder.
-- `src/blockchain/chain.py`: `Blockchain` sınıfı.
-  - Zincir yönetimi, bekleyen işlemler havuzu, proof‑of‑work (basit nonce), zincir doğrulama.
-- `src/blockchain/config.py`: `DIFFICULTY` sabiti.
+- Python 3
+- PyQt5
+- pqcrypto
+- ecdsa
+- matplotlib
+- seaborn
+- pandas
+- numpy
+- mnemonic
+- web3
+- eth-keys
+- eth-account
 
-### Aşama 3 – Simülasyon & Karşılaştırma (Kısmen)
+## Proje Yapısı
 
-- `src/comparison.py`: Her iki wallet için kriptografik operasyonları ve blockchain işlemlerini ölçer.
-  - Anahtar üretim süresi, public key boyutu, imzalama süresi, imza boyutu, doğrulama süresi.
-  - Alice → Bob işlem oluşturma, imzalama, doğrulama, blok madenciliği süreleri.
-- `src/main.py`: Her iki wallet ile blockchain testini çalıştırır, adresleri ve süreleri ekrana basar.
-
-## 🚧 Sıradaki Aşamalar
-
-### Aşama 4 – PyQt5 GUI
-
-- Klasör: `src/gui/`
-  - `main_window.py`: Ana pencere (tab’lar: Wallet, Blockchain, Analytics).
-  - `wallet_tab.py`: Cüzdan oluşturma, adres görüntüleme, işlem gönderme.
-  - `blockchain_tab.py`: Blok listesi, işlem detayları.
-  - `analytics_tab.py`: Grafikler (matplotlib FigureCanvas).
-- PyQt5 ile backend bağlantısı: wallet ve blockchain nesneleri GUI’den kontrol edilir.
-
-### Aşama 5 – Analytics Modülü
-
-- `src/analytics/` klasörü.
-  - `benchmarks.py`: Toplu ölçümler (çok sayıda işlem, farklı mesaj boyutları).
-  - `plots.py`: Karşılaştırmalı grafikler (imza boyutu, süreler) – seaborn/matplotlib.
-  - `stats.py`: Zincir istatistikleri (blok süreleri, işlem sayısı).
-
-### Aşama 6 – Dokümantasyon & Sunum
-
-- `README.md` güncellenecek.
-- Proje raporu (PDF/Word) ve sunum hazırlığı.
-
-
-## Güncel Dosya Yapısı
-```plaintext
-src/
-├── __init__.py
+```text
+pqwallet/
 ├── main.py
-├── comparison.py
-├── wallet/
-│   ├── __init__.py
-│   ├── pq_wallet.py
-│   └── ecdsa_wallet.py
-├── blockchain/
-│   ├── __init__.py
-│   ├── models.py
-│   ├── chain.py
-│   └── config.py
-├── gui/               # (ileride)
-└── analytics/         # (ileride) 
-```
-## 🔧 Dosya mimarisi
-```
-post_quantum_blockchain/
-│
-├── README.md
 ├── requirements.txt
-├── .gitignore
-│
+├── seedgenerator.py
 ├── src/
-│   ├── __init__.py
-│   ├── main.py                     # Entry point: launches GUI or CLI
-│   │
+│   ├── main.py
+│   ├── comparison.py
 │   ├── wallet/
-│   │   ├── __init__.py
-│   │   ├── pq_wallet.py             # Post‑quantum wallet implementation
-│   │   ├── ecdsa_wallet.py           # Classical wallet for comparison
-│   │   └── mnemonic_utils.py         # BIP39 mnemonic to seed
-│   │
+│   │   ├── pq_wallet.py
+│   │   ├── ecdsa_wallet.py
+│   │   └── mnemonic_utils.py
 │   ├── blockchain/
-│   │   ├── __init__.py
-│   │   ├── models.py                 # Block, Transaction classes
-│   │   ├── chain.py                  # Blockchain class and validation
-│   │   └── config.py                 # e.g., DIFFICULTY, BLOCK_TIME
-│   │
+│   │   ├── models.py
+│   │   ├── chain.py
+│   │   └── config.py
 │   ├── gui/
-│   │   ├── __init__.py
-│   │   ├── main_window.py             # PyQt5 main window
-│   │   ├── wallet_tab.py              # Wallet UI
-│   │   ├── blockchain_tab.py          # Blockchain viewer
-│   │   ├── analytics_tab.py           # Plotting UI
-│   │   └── styles.py                  # QSS stylesheets
-│   │
+│   │   ├── main_window.py
+│   │   ├── wallet_tab.py
+│   │   ├── blockchain_tab.py
+│   │   ├── analytics_tab.py
+│   │   └── comparison_tab.py
 │   ├── analytics/
-│   │   ├── __init__.py
-│   │   ├── benchmarks.py              # Keygen/sign/verify timing
-│   │   ├── plots.py                   # Matplotlib plotting functions
-│   │   └── stats.py                   # Blockchain statistics
-│   │
+│   │   ├── benchmarks.py
+│   │   └── plots.py
 │   └── simulation/
-│       ├── __init__.py
-│       ├── tx_generator.py             # Generate random transactions
-│       ├── miner.py                    # Simple mining simulation
-│       └── runner.py                    # Run test scenarios
-│
+│       ├── tx_generator.py
+│       ├── miner.py
+│       └── runner.py
 ├── tests/
-│   ├── test_wallet.py
-│   ├── test_blockchain.py
-│   └── test_integration.py
-│
-├── data/
-│   └── logs
-│
 └── docs/
-    ├── project_report.tex (or .md)
-    └── presentation.pptx
 ```
-    
-## 🔧 Kritik Kod Parçacıkları (Özet)
 
-1. **ECDSA Wallet (public key bytes olarak)**
-```python
-self.public_key = vk.to_string()  # bytes
-# verify içinde:
-vk = VerifyingKey.from_string(pk_bytes, curve=SECP256k1)
-vk.verify(signature, message)
+## Kurulum
+
+Önce sanal ortam oluşturun:
+
+```bash
+python -m venv .venv
+```
+
+Sanal ortamı etkinleştirin:
+
+**Linux / macOS**
+```bash
+source .venv/bin/activate
+```
+
+**Windows**
+```bash
+.venv\Scripts\activate
+```
+
+Bağımlılıkları yükleyin:
+
+```bash
+pip install -r requirements.txt
+```
+
+## Çalıştırma
+
+GUI uygulamasını başlatmak için proje kök klasöründe şu komutu kullanın:
+
+```bash
+python main.py
+```
+
+CLI / test akışını çalıştırmak için:
+
+```bash
+python -m src.main
+```
+
+## Nasıl Çalışır?
+
+### 1. Cüzdanlar
+- `PQWallet`: ML-DSA-44 ile anahtar üretir, mesaj imzalar ve doğrular.
+- `ECDSAWallet`: Klasik `secp256k1` tabanlı ECDSA uygulamasıdır.
+- Her iki cüzdan da adres üretiminde `SHA-256 + RIPEMD-160` yaklaşımını kullanır.
+
+### 2. İşlemler
+`Transaction` nesnesi:
+- gönderici,
+- alıcı,
+- miktar,
+- wallet tipi (`pq` veya `ecdsa`),
+- imza ve açık anahtar
+
+bilgilerini taşır. İşlemin geçerliliği cüzdan tipine göre doğrulanır.
+
+### 3. Blockchain
+- Genesis blok oluşturulur.
+- Geçerli işlemler bekleyen havuza eklenir.
+- `mine_pending_transactions()` ile basit proof-of-work uygulanarak yeni blok üretilir.
+- Zincir bütünlüğü `is_chain_valid()` ile kontrol edilir.
+
+### 4. Arayüz
+Uygulama içinde dört ana sekme bulunur:
+- **Cüzdan**: Cüzdan işlemleri
+- **Blockchain**: Blok ve işlem görünümü
+- **Analiz**: Benchmark ve grafikler
+- **Karşılaştırma**: ML-DSA-44 ve ECDSA metrikleri
+
+## Notlar
+
+- Proje aktif olarak bir **simülatör** olarak tasarlanmıştır; gerçek bir blokzincir ağına doğrudan bağlı değildir.
+- Post-quantum imza tarafında `pqcrypto.sign.ml_dsa_44` kullanılır.
+- GUI başlatıcısı `main.py` içindedir; bu yüzden uygulamayı repo kökünden çalıştırmak en güvenli yöntemdir.
+
+## Lisans
+
+Bu proje MIT lisansı ile lisanslanmıştır.
